@@ -17,6 +17,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse,HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(UrlExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleUrlExpired(UrlExpiredException ex){
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(),HttpStatus.GONE.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex){
 

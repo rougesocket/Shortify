@@ -31,12 +31,6 @@ public class Url {
     public Url() {
     }
 
-    public Url( String shortCode, String longUrl) {
-        this.shortCode = shortCode;
-        this.longUrl = longUrl;
-        this.createdAt = LocalDateTime.now();
-    }
-
     public Long getId() {
         return id;
     }
@@ -45,11 +39,11 @@ public class Url {
         this.id = id;
     }
 
-    public String getShortcode() {
+    public String getShortCode() {
         return shortCode;
     }
 
-    public void setShortcode(String shortCode) {
+    public void setShortCode(String shortCode) {
         this.shortCode = shortCode;
     }
 
@@ -85,6 +79,9 @@ public class Url {
         this.expiresAt = expiresAt;
     }
 
+    public boolean isExpired(){
+        return this.expiresAt.isBefore(LocalDateTime.now());
+    }
     @Override
     public String toString() {
         return "Url{" +
