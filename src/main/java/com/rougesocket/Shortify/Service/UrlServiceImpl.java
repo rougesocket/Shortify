@@ -1,10 +1,10 @@
 package com.rougesocket.Shortify.Service;
 
+import com.rougesocket.Shortify.Dto.UrlCache;
 import com.rougesocket.Shortify.Entity.Url;
 import com.rougesocket.Shortify.Repository.UrlRepository;
 import com.rougesocket.Shortify.exception.UrlExpiredException;
 import com.rougesocket.Shortify.exception.UrlNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,8 @@ public class UrlServiceImpl implements UrlService{
     private final UrlRepository urlRepository;
 
     @Autowired
+    private RedisService redisService;
+    @Autowired
     public UrlServiceImpl(UrlRepository urlRepository){
         this.urlRepository=urlRepository;
     }
@@ -42,13 +44,21 @@ public class UrlServiceImpl implements UrlService{
     }
 
     @Override
-    @Transactional
     public String getOriginalUrl(String shortCode) {
+
+        UrlCache cachedUrl = redisService.get(shortCode);
+        if(cachedUrl!=null){
+            if(cachedUrl.getExpiresAt().isBefore(LocalDateTime.now()))throw new UrlExpiredException("Url Expired");
+            return cachedUrl.getLongUrl();
+        }
+
+
         Url url = urlRepository.findByShortCode(shortCode).orElseThrow(()-> new UrlNotFoundException("Url Not Found: "+shortCode));
         if(url.isExpired()){
             throw new UrlExpiredException("Url Expired");
         }
-        url.setClickCount(url.getClickCount()+1);
+
+        redisService.set(shortCode,new UrlCache(url.getLongUrl(),url.getExpiresAt()));
         return url.getLongUrl();
     }
 
