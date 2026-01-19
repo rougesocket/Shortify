@@ -19,9 +19,6 @@ public class Url {
     @Column(name = "long_url",nullable = false,length = 2048)
     private String longUrl;
 
-    @Column(name = "click_count",nullable = false)
-    private Long clickCount = 0L;
-
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 
@@ -55,13 +52,6 @@ public class Url {
         this.longUrl = longUrl;
     }
 
-    public Long getClickCount() {
-        return clickCount;
-    }
-
-    public void setClickCount(Long clickCount) {
-        this.clickCount = clickCount;
-    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -88,7 +78,6 @@ public class Url {
                 "id=" + id +
                 ", shortCode='" + shortCode + '\'' +
                 ", longUrl='" + longUrl + '\'' +
-                ", clickCount=" + clickCount +
                 ", createdAt=" + createdAt +
                 ", expiresAt=" + expiresAt +
                 '}';
